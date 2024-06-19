@@ -1,5 +1,7 @@
 ﻿using Microsoft.Identity.Client;
 using MVC_Project_Internal.Data;
+using System.Security.Cryptography;
+using System.Text;
 using WebApi_Project_Internal.AuthorizationFilters.Services;
 
 namespace WebApi_Project_Internal.AuthorizationFilters.Repositories
@@ -15,14 +17,24 @@ namespace WebApi_Project_Internal.AuthorizationFilters.Repositories
         }
         public string GenerateSalt()
         {
-            throw new NotImplementedException();
+            var saltBytes = new byte[16];
+            using (var provider = new RNGCryptoServiceProvider()) { provider.GetBytes(saltBytes); }
+
+            return Convert.ToBase64String(saltBytes);
         }
 
         public string HashPassword(string password, string salt)
         {
-            throw new NotImplementedException();
-        }
+            using (var sha256 = SHA256.Create())
+            {
 
+                var saltedPassword = password + salt;
+                byte[] saltedPasswordByte = Encoding.UTF8.GetBytes(saltedPassword);
+                byte[] hasBytes = sha256.ComputeHash(saltedPasswordByte);
+                return Convert.ToBase64String(hasBytes);
+            }
+
+        }
         public bool IsValidUser(string Email, string password)
         {
             bool isValid = false;

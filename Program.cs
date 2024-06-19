@@ -3,6 +3,8 @@ using BackEnd.AuthorizationFilters.Services;
 using Microsoft.EntityFrameworkCore;
 using MVC_Project_Internal.Data;
 using MVC_Project_Internal.Filters;
+using WebApi_Project_Internal.AuthorizationFilters.Repositories;
+using WebApi_Project_Internal.AuthorizationFilters.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,9 +14,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 // Add services to the container.
+builder.Services.AddScoped<IAccountServices, AccountRepositories>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddScoped<IUserAccount, UserAccountSettings>();
-builder.Services.AddScoped<ApiKeyValidation>(); 
+builder.Services.AddScoped<ApiKeyValidation>();
 
 builder.Services.AddHttpClient("Users", x =>
 {
