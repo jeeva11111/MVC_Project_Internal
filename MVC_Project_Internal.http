@@ -1,0 +1,11 @@
+@MVC_Project_Internal_HostAddress = http://localhost:5150
+
+
+
+GET {https://localhost:7101/api/User/GetUsers}
+
+
+GET https://localhost:7101/api/User/GetUsers/
+Accept: application/json
+
+###
