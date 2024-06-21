@@ -18,11 +18,13 @@ public class AccountController : ControllerBase
 {
     private readonly string _connectionstring;
     private readonly IConfiguration _configuration;
+    private readonly IAccountServices _accountServices;
 
-    public AccountController(IConfiguration configuration)
+    public AccountController(IConfiguration configuration, IAccountServices accountServices)
     {
         _configuration = configuration;
         _connectionstring = _configuration.GetConnectionString("ServerLink");
+        _accountServices = accountServices;
     }
 
     [HttpGet, Route("Get")]
