@@ -56,7 +56,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
+app.UseSession();
 //app.UseMiddleware<ApiKeyValidation>();
 app.UseAuthorization();
 app.MapControllers();

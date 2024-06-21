@@ -7,11 +7,12 @@ using WebApi_Project_Internal.Models;
 using Microsoft.Data.SqlClient;
 using BackEnd.AuthorizationFilters.AuthFilter;
 using BackEnd.Middleware;
+using WebApi_Project_Internal.AuthorizationFilters.Services;
 
 [ApiController]
 [Route("api/[controller]")]
 //[ServiceFilter(typeof(ApiKeyValidation))]
-    [ServiceFilter(typeof(ErrorHandler))]
+[ServiceFilter(typeof(ErrorHandler))]
 
 public class AccountController : ControllerBase
 {
@@ -39,9 +40,27 @@ public class AccountController : ControllerBase
         return BadRequest("user doesn't exist");
     }
     [HttpGet, Route("Error")]
- public  Task<IActionResult> ErroMessage()
+    public Task<IActionResult> ErroMessage()
     {
         throw new Exception("unable to return the ErrorMessage");
-    }   
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginViewModel login)
+    {
+        if (!string.IsNullOrWhiteSpace(login.Email) && !string.IsNullOrWhiteSpace(login.Password))
+        {
+            var isValid = _accountServices.IsValidUser(login.Email, login.Password);
+
+            if (isValid)
+            {
+                return Ok(true);
+            }
+        }
+        ModelState.AddModelError("", "Invalid user inputs");
+
+        return BadRequest("Invalid user inputs");
+    }
+
 
 }

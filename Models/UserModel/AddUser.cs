@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApi_Project_Internal.Models.UserModel
 {
@@ -30,25 +31,39 @@ namespace WebApi_Project_Internal.Models.UserModel
     {
         [Key]
         public int ChannelId { get; set; }
-        public int UserId { get; set; }
+        public int CurrentUserId { get; set; }
         public string? ChannelName { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
-
+        public string? Categoery { get; set; }
+        public byte[]? ImageData { get; set; }
+        public string? ImageName { get; set; }
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
         public User_? User { get; set; }
     }
 
     public class Video
     {
+
         [Key]
         public int VideoId { get; set; }
-        public int ChannelId { get; set; }
-        public int UserId { get; set; }
+        public int VideoChannelId { get; set; }
+        public int CurrentUserId { get; set; }
         public string? Title { get; set; }
+        public string? Categoery { get; set; }
         public string? Description { get; set; }
         public string? VideoUrl { get; set; }
         public DateTime? CreatedAt { get; set; }
+        public byte[]? ImageData { get; set; }
+        public string? ImageName { get; set; }
+        public byte[]? VideoData { get; set; }
+        public string? VideoName { get; set; }
 
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
+        [NotMapped]
+        public IFormFile? VideoFile { get; set; }
         public Channel? Channel { get; set; }
         public User_? User { get; set; }
     }
