@@ -35,6 +35,7 @@ builder.Services.AddSession(x =>
 
 });
 
+builder.Services.AddHttpContextAccessor();
 
 
 builder.Services.AddEndpointsApiExplorer();

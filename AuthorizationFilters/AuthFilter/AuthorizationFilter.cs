@@ -50,7 +50,6 @@ namespace BackEnd.AuthorizationFilters.AuthFilter
     //    }
     //}
       
-    
           public class ApiKeyValidation : IAuthorizationFilter
         {
             private readonly IConfiguration _configuration;
