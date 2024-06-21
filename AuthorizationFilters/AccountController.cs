@@ -6,10 +6,13 @@ using Dapper;
 using WebApi_Project_Internal.Models;
 using Microsoft.Data.SqlClient;
 using BackEnd.AuthorizationFilters.AuthFilter;
+using BackEnd.Middleware;
 
 [ApiController]
 [Route("api/[controller]")]
 //[ServiceFilter(typeof(ApiKeyValidation))]
+    [ServiceFilter(typeof(ErrorHandler))]
+
 public class AccountController : ControllerBase
 {
     private readonly string _connectionstring;
@@ -35,5 +38,10 @@ public class AccountController : ControllerBase
 
         return BadRequest("user doesn't exist");
     }
+    [HttpGet, Route("Error")]
+ public  Task<IActionResult> ErroMessage()
+    {
+        throw new Exception("unable to return the ErrorMessage");
+    }   
 
 }

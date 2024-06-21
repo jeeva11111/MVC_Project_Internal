@@ -2,6 +2,7 @@ using BackEnd.AuthorizationFilters.AuthFilter;
 using BackEnd.AuthorizationFilters.Services;
 using BackEnd.Middleware;
 using Microsoft.AspNetCore.Builder.Extensions;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using MVC_Project_Internal.Data;
 using MVC_Project_Internal.Filters;
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 // Add services to the container.
+builder.Services.AddScoped<ErrorHandler>();
 builder.Services.AddScoped<IAccountServices, AccountRepositories>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddScoped<IUserAccount, UserAccountSettings>();
@@ -29,6 +31,7 @@ builder.Services.AddHttpClient("Users", x =>
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 );
+
 //x => x.Filters.Add<ApiKeyValidation>()
 builder.Services.AddSession(x =>
 {
@@ -45,7 +48,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseMiddleware<ErrorHandler>();
+// app.UseMiddleware<ErrorHandler>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
