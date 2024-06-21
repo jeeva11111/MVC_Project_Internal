@@ -35,4 +35,5 @@ public class AccountController : ControllerBase
 
         return BadRequest("user doesn't exist");
     }
+
 }

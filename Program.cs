@@ -1,5 +1,7 @@
 using BackEnd.AuthorizationFilters.AuthFilter;
 using BackEnd.AuthorizationFilters.Services;
+using BackEnd.Middleware;
+using Microsoft.AspNetCore.Builder.Extensions;
 using Microsoft.EntityFrameworkCore;
 using MVC_Project_Internal.Data;
 using MVC_Project_Internal.Filters;
@@ -43,6 +45,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseMiddleware<ErrorHandler>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
