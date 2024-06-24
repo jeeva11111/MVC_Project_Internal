@@ -41,6 +41,31 @@ namespace WebApi_Project_Internal.Controller
         }
 
 
+        [HttpGet("ChannelGetById")]
+        public async Task<IActionResult> ChannelGetbyId()
+        {
+            var currentUser = _contextAccessor.HttpContext.Session.GetString("UserId");
+
+            if (currentUser == null)
+            {
+                return BadRequest("user Id is null");
+            }
+            string query = $"SELECT * FROM Channels where CurrentUserId = {currentUser}";
+            using var connection = new SqlConnection(_connectionString);
+
+            var result = await connection.QueryAsync(query, new { UserId = currentUser });
+
+            if (result.Any()) { return Ok(result); }
+            return NotFound("User doesn't have a channel");
+        }
+
+
+
+
+
+
+
+
         [HttpPost("Create")]
 
         public async Task<IActionResult> CreateChannel([FromForm] Bk_ChennelViewModel model)
