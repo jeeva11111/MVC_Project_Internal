@@ -43,4 +43,10 @@ namespace WebApi_Project_Internal.Models.BkViewModels
         public string? ComformPassword { get; set; }
 
     }
+
+    public class Bk_Commints
+    {
+        public string? CommentText { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
 }

@@ -59,7 +59,8 @@ namespace WebApi_Project_Internal.Controller
             {
                 var listOfVideos = await _context.Videos
                     .Where(v => v.CurrentUserId == parsedUserId).Select(x => new
-                    {x.ImageName, x.VideoName, x.Categoery,  x .Description,x.CreatedAt })
+                    {x.ImageName, x.VideoName, x.Categoery,  x .Description,x.CreatedAt,x
+                    .VideoId})
                     .ToListAsync();
 
                 if (listOfVideos.Any())
