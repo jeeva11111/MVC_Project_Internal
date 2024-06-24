@@ -8,29 +8,36 @@ using Microsoft.Data.SqlClient;
 using BackEnd.AuthorizationFilters.AuthFilter;
 using BackEnd.Middleware;
 using WebApi_Project_Internal.AuthorizationFilters.Services;
+using WebApi_Project_Internal.Models.BkViewModels;
+using System.Reflection.Metadata.Ecma335;
+using MVC_Project_Internal.Data;
+using System.Linq;
+using WebApi_Project_Internal.Models.UserModel;
 
 [ApiController]
 [Route("api/[controller]")]
 //[ServiceFilter(typeof(ApiKeyValidation))]
-[ServiceFilter(typeof(ErrorHandler))]
+//[ServiceFilter(typeof(ErrorHandler))]
 
 public class AccountController : ControllerBase
 {
     private readonly string _connectionstring;
     private readonly IConfiguration _configuration;
     private readonly IAccountServices _accountServices;
+    private readonly ApplicationDbContext _context;
 
-    public AccountController(IConfiguration configuration, IAccountServices accountServices)
+    public AccountController(IConfiguration configuration, IAccountServices accountServices, ApplicationDbContext context)
     {
         _configuration = configuration;
         _connectionstring = _configuration.GetConnectionString("ServerLink");
         _accountServices = accountServices;
+        _context = context;
     }
 
     [HttpGet, Route("Get")]
     public async Task<IActionResult> GetPost()
     {
-        var query = "SELECT * FROM AddUsers";
+        var query = "SELECT * FROM AddUser";
         using var connection = new SqlConnection(_connectionstring);
         var content = await connection.QueryAsync<AddUsers>(query);
 
@@ -41,14 +48,9 @@ public class AccountController : ControllerBase
 
         return BadRequest("user doesn't exist");
     }
-    [HttpGet, Route("Error")]
-    public Task<IActionResult> ErroMessage()
-    {
-        throw new Exception("unable to return the ErrorMessage");
-    }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginViewModel login)
+    public async Task<IActionResult> Login([FromBody] BK_LoginViewModel login)
     {
         if (!string.IsNullOrWhiteSpace(login.Email) && !string.IsNullOrWhiteSpace(login.Password))
         {
@@ -59,10 +61,44 @@ public class AccountController : ControllerBase
                 return Ok(true);
             }
         }
-        ModelState.AddModelError("", "Invalid user inputs");
+        ModelState.AddModelError("", "Invalid login attempt");
 
         return BadRequest("Invalid user inputs");
     }
 
+
+    [HttpPost("Register")]
+
+    public async Task<IActionResult> Resigter(BK_RegesterViewModel register)
+    {
+        if (ModelState.IsValid)
+        {
+            var isExisting = (from x in _context.AddUser
+                              where x.Email == register.Email
+                              select new { email = x }).SingleOrDefault();
+
+            if (isExisting == null)
+            {
+                string passwordSalt = _accountServices.GenerateSalt();
+                string passwordHash = _accountServices.HashPassword(register.Password, passwordSalt);
+
+                _context.AddUser.Add(new User_()
+                {
+                    Email = register.Email,
+                    UserName = register.UserName,
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt,
+
+                });
+
+                _context.SaveChanges();
+                return Ok(true);
+            }
+            return BadRequest("User already exists.");
+
+        }
+
+        return BadRequest("Unable to Add the model in DB");
+    }
 
 }
