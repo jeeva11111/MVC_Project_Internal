@@ -5,6 +5,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MVC_Project_Internal.Data;
 using WebApi_Project_Internal.Models.BkViewModels;
+using WebApi_Project_Internal.Models.UserModel;
 
 namespace WebApi_Project_Internal.Controller
 {
@@ -24,6 +25,85 @@ namespace WebApi_Project_Internal.Controller
             _connectionString = _configuration.GetConnectionString("ServerLink");
 
         }
+
+        [HttpGet("GetVideoAllVideos")]
+
+        public async Task<IActionResult> GeAllVideos()
+        {
+            string query = "SELECT * FROM Videos";
+
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.QueryAsync<Video>(query);
+            if (result.Any()) { return Ok(result.ToList()); }
+            return BadRequest("video is empty");
+        }
+
+
+
+        [HttpGet("GetById")]
+        public async Task<IActionResult> GetByUserId()
+        {
+            var userId = _contextAccessor.HttpContext.Session.GetString("UserId");
+            if (userId == null)
+            {
+                return BadRequest("UserId is required");
+            }
+
+            int parsedUserId;
+            if (!int.TryParse(userId, out parsedUserId))
+            {
+                return BadRequest("Invalid UserId");
+            }
+
+            try
+            {
+                var listOfVideos = await _context.Videos
+                    .Where(v => v.CurrentUserId == parsedUserId).Select(x => new
+                    {x.ImageName, x.VideoName, x.Categoery,  x .Description,x.CreatedAt })
+                    .ToListAsync();
+
+                if (listOfVideos.Any())
+                {
+                    return Ok(listOfVideos);
+                }
+                return NotFound("No videos available for this user");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
+        [HttpGet("GetbyCategory")]
+        public async Task<IActionResult> GetVideoByCategory(string category)
+        {
+            if (string.IsNullOrEmpty(category))
+            {
+                return BadRequest("Enter the category");
+            }
+
+            var userId = _contextAccessor.HttpContext.Session.GetString("UserId");
+            if (userId == null)
+            {
+                return BadRequest("UserId is required");
+            }
+
+            string query = "SELECT * FROM Videos WHERE Categoery = @Category AND CurrentUserId = @UserId";
+
+            using var connection = new SqlConnection(_connectionString);
+            var parameters = new { Category = category, UserId = Convert.ToInt32(userId) };
+            var result = await connection.QueryAsync<Video>(query, parameters);
+
+            if (result.Any())
+            {
+                return Ok(result.ToList());
+            }
+
+            return BadRequest("Unable to find the matching record");
+        }
+
+
 
         [HttpPost("uploadVideo")]
         public async Task<IActionResult> PostVideo([FromForm] Bk_VideoViewModel model)
@@ -77,7 +157,7 @@ namespace WebApi_Project_Internal.Controller
                 var insertVideoQuery = "INSERT INTO Videos (Title, Description, CreatedAt, ImageData, ImageName, VideoData, VideoName, Categoery, VideoChannelId, CurrentUserId) VALUES (@Title, @Description, @CreatedAt, @ImageData, @ImageName, @VideoData, @VideoName, @Categoery, @VideoChannelId, @CurrentUserId)";
 
                 using var connection = new SqlConnection(_connectionString);
-            
+
                 var result = await connection.ExecuteAsync(insertVideoQuery, new
                 {
                     videoModel.Title,
@@ -175,6 +255,8 @@ namespace WebApi_Project_Internal.Controller
                 return BadRequest(ex.Message);
             }
         }
+
+
 
     }
 }
