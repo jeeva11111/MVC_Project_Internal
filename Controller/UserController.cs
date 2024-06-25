@@ -1,8 +1,8 @@
 using BackEnd.AuthorizationFilters.AuthFilter;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MVC_Project_Internal.Data;
 using MVC_Project_Internal.Filters;
+using WebApi_Project_Internal.Data;
 
 namespace MVC_Project_Internal.Controller
 {

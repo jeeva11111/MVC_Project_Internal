@@ -65,6 +65,26 @@ namespace WebApi_Project_Internal.Controller
             return BadRequest("unable to create the channel");
         }
 
-        // hello world
+        [HttpGet("ChannelGetById")]
+        public async Task<IActionResult> ChannelGetById()
+        {
+            var currentUser = _contextAccessor.HttpContext.Session.GetString("UserId");
+
+            if (string.IsNullOrEmpty(currentUser))
+            {
+                return BadRequest("User ID is null");
+            }
+
+            string query = "SELECT * FROM Channels WHERE CurrentUserId = @UserId";
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.QueryAsync(query, new { UserId = currentUser });
+
+            if (result.Any())
+            {
+                return Ok(result);
+            }
+
+            return NotFound("User doesn't have a channel");
+        }
     }
 }

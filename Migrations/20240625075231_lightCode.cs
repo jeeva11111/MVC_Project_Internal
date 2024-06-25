@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebApi_Project_Internal.Migrations
 {
     /// <inheritdoc />
-    public partial class firstLights : Migration
+    public partial class lightCode : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -29,7 +29,7 @@ namespace WebApi_Project_Internal.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Role",
+                name: "Roles",
                 columns: table => new
                 {
                     RoleId = table.Column<int>(type: "int", nullable: false)
@@ -38,22 +38,7 @@ namespace WebApi_Project_Internal.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Role", x => x.RoleId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Students",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Students", x => x.Id);
+                    table.PrimaryKey("PK_Roles", x => x.RoleId);
                 });
 
             migrationBuilder.CreateTable(
@@ -62,10 +47,14 @@ namespace WebApi_Project_Internal.Migrations
                 {
                     ChannelId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CurrentUserId = table.Column<int>(type: "int", nullable: false),
                     ChannelName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Categoery = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    ImageName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -74,8 +63,7 @@ namespace WebApi_Project_Internal.Migrations
                         name: "FK_Channels_AddUser_UserId",
                         column: x => x.UserId,
                         principalTable: "AddUser",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -84,10 +72,11 @@ namespace WebApi_Project_Internal.Migrations
                 {
                     PlaylistId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CurrentUserId = table.Column<int>(type: "int", nullable: false),
                     PlaylistName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -96,8 +85,7 @@ namespace WebApi_Project_Internal.Migrations
                         name: "FK_Playlists_AddUser_UserId",
                         column: x => x.UserId,
                         principalTable: "AddUser",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -106,7 +94,7 @@ namespace WebApi_Project_Internal.Migrations
                 {
                     UserProfileId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CurrentUserId = table.Column<int>(type: "int", nullable: false),
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProfilePictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -114,15 +102,15 @@ namespace WebApi_Project_Internal.Migrations
                 {
                     table.PrimaryKey("PK_UserProfiles", x => x.UserProfileId);
                     table.ForeignKey(
-                        name: "FK_UserProfiles_AddUser_UserId",
-                        column: x => x.UserId,
+                        name: "FK_UserProfiles_AddUser_CurrentUserId",
+                        column: x => x.CurrentUserId,
                         principalTable: "AddUser",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "RolePermission",
+                name: "RolePermissions",
                 columns: table => new
                 {
                     RolePermissionId = table.Column<int>(type: "int", nullable: false)
@@ -132,37 +120,37 @@ namespace WebApi_Project_Internal.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RolePermission", x => x.RolePermissionId);
+                    table.PrimaryKey("PK_RolePermissions", x => x.RolePermissionId);
                     table.ForeignKey(
-                        name: "FK_RolePermission_Role_RoleId",
+                        name: "FK_RolePermissions_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "Role",
+                        principalTable: "Roles",
                         principalColumn: "RoleId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserRole",
+                name: "UserRoles",
                 columns: table => new
                 {
                     UserRoleId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false)
+                    CurrentUserId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserRole", x => x.UserRoleId);
+                    table.PrimaryKey("PK_UserRoles", x => x.UserRoleId);
                     table.ForeignKey(
-                        name: "FK_UserRole_AddUser_UserId",
+                        name: "FK_UserRoles_AddUser_UserId",
                         column: x => x.UserId,
                         principalTable: "AddUser",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_UserRole_Role_RoleId",
+                        name: "FK_UserRoles_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "Role",
+                        principalTable: "Roles",
                         principalColumn: "RoleId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -173,9 +161,10 @@ namespace WebApi_Project_Internal.Migrations
                 {
                     SubscriptionId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CurrentUserId = table.Column<int>(type: "int", nullable: false),
                     ChannelId = table.Column<int>(type: "int", nullable: false),
-                    SubscribedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    SubscribedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -184,14 +173,13 @@ namespace WebApi_Project_Internal.Migrations
                         name: "FK_Subscriptions_AddUser_UserId",
                         column: x => x.UserId,
                         principalTable: "AddUser",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                     table.ForeignKey(
                         name: "FK_Subscriptions_Channels_ChannelId",
                         column: x => x.ChannelId,
                         principalTable: "Channels",
                         principalColumn: "ChannelId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -200,12 +188,19 @@ namespace WebApi_Project_Internal.Migrations
                 {
                     VideoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ChannelId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    VideoChannelId = table.Column<int>(type: "int", nullable: false),
+                    CurrentUserId = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Categoery = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     VideoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    ImageName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VideoData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    VideoName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ChannelId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -214,14 +209,12 @@ namespace WebApi_Project_Internal.Migrations
                         name: "FK_Videos_AddUser_UserId",
                         column: x => x.UserId,
                         principalTable: "AddUser",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                     table.ForeignKey(
                         name: "FK_Videos_Channels_ChannelId",
                         column: x => x.ChannelId,
                         principalTable: "Channels",
-                        principalColumn: "ChannelId",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "ChannelId");
                 });
 
             migrationBuilder.CreateTable(
@@ -231,9 +224,10 @@ namespace WebApi_Project_Internal.Migrations
                     CommentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     VideoId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CurrentUserId = table.Column<int>(type: "int", nullable: false),
                     CommentText = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -242,14 +236,13 @@ namespace WebApi_Project_Internal.Migrations
                         name: "FK_Comments_AddUser_UserId",
                         column: x => x.UserId,
                         principalTable: "AddUser",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                     table.ForeignKey(
                         name: "FK_Comments_Videos_VideoId",
                         column: x => x.VideoId,
                         principalTable: "Videos",
                         principalColumn: "VideoId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -258,9 +251,10 @@ namespace WebApi_Project_Internal.Migrations
                 {
                     HistoryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CurrentUserId = table.Column<int>(type: "int", nullable: false),
                     VideoId = table.Column<int>(type: "int", nullable: false),
-                    WatchedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    WatchedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -269,14 +263,13 @@ namespace WebApi_Project_Internal.Migrations
                         name: "FK_Histories_AddUser_UserId",
                         column: x => x.UserId,
                         principalTable: "AddUser",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                     table.ForeignKey(
                         name: "FK_Histories_Videos_VideoId",
                         column: x => x.VideoId,
                         principalTable: "Videos",
                         principalColumn: "VideoId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -286,9 +279,10 @@ namespace WebApi_Project_Internal.Migrations
                     LikeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     VideoId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CurrentUserId = table.Column<int>(type: "int", nullable: false),
                     IsLike = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -297,14 +291,13 @@ namespace WebApi_Project_Internal.Migrations
                         name: "FK_Likes_AddUser_UserId",
                         column: x => x.UserId,
                         principalTable: "AddUser",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                     table.ForeignKey(
                         name: "FK_Likes_Videos_VideoId",
                         column: x => x.VideoId,
                         principalTable: "Videos",
                         principalColumn: "VideoId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -313,11 +306,12 @@ namespace WebApi_Project_Internal.Migrations
                 {
                     NotificationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CurrentUserId = table.Column<int>(type: "int", nullable: false),
                     VideoId = table.Column<int>(type: "int", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -326,14 +320,13 @@ namespace WebApi_Project_Internal.Migrations
                         name: "FK_Notifications_AddUser_UserId",
                         column: x => x.UserId,
                         principalTable: "AddUser",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                     table.ForeignKey(
                         name: "FK_Notifications_Videos_VideoId",
                         column: x => x.VideoId,
                         principalTable: "Videos",
                         principalColumn: "VideoId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -342,9 +335,10 @@ namespace WebApi_Project_Internal.Migrations
                 {
                     PlaylistVideoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PlaylistId = table.Column<int>(type: "int", nullable: false),
+                    CurrentUserId = table.Column<int>(type: "int", nullable: false),
                     VideoId = table.Column<int>(type: "int", nullable: false),
-                    AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PlaylistId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -353,14 +347,13 @@ namespace WebApi_Project_Internal.Migrations
                         name: "FK_PlaylistVideos_Playlists_PlaylistId",
                         column: x => x.PlaylistId,
                         principalTable: "Playlists",
-                        principalColumn: "PlaylistId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "PlaylistId");
                     table.ForeignKey(
                         name: "FK_PlaylistVideos_Videos_VideoId",
                         column: x => x.VideoId,
                         principalTable: "Videos",
                         principalColumn: "VideoId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -424,8 +417,8 @@ namespace WebApi_Project_Internal.Migrations
                 column: "VideoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RolePermission_RoleId",
-                table: "RolePermission",
+                name: "IX_RolePermissions_RoleId",
+                table: "RolePermissions",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
@@ -439,19 +432,19 @@ namespace WebApi_Project_Internal.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_UserId",
+                name: "IX_UserProfiles_CurrentUserId",
                 table: "UserProfiles",
-                column: "UserId",
+                column: "CurrentUserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRole_RoleId",
-                table: "UserRole",
+                name: "IX_UserRoles_RoleId",
+                table: "UserRoles",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRole_UserId",
-                table: "UserRole",
+                name: "IX_UserRoles_UserId",
+                table: "UserRoles",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -484,10 +477,7 @@ namespace WebApi_Project_Internal.Migrations
                 name: "PlaylistVideos");
 
             migrationBuilder.DropTable(
-                name: "RolePermission");
-
-            migrationBuilder.DropTable(
-                name: "Students");
+                name: "RolePermissions");
 
             migrationBuilder.DropTable(
                 name: "Subscriptions");
@@ -496,7 +486,7 @@ namespace WebApi_Project_Internal.Migrations
                 name: "UserProfiles");
 
             migrationBuilder.DropTable(
-                name: "UserRole");
+                name: "UserRoles");
 
             migrationBuilder.DropTable(
                 name: "Playlists");
@@ -505,7 +495,7 @@ namespace WebApi_Project_Internal.Migrations
                 name: "Videos");
 
             migrationBuilder.DropTable(
-                name: "Role");
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Channels");

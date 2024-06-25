@@ -72,7 +72,7 @@ namespace WebApi_Project_Internal.Models.UserModel
     {
         [Key]
         public int SubscriptionId { get; set; }
-        public int UserId { get; set; }
+        public int CurrentUserId { get; set; }
         public int ChannelId { get; set; }
         public DateTime SubscribedAt { get; set; }
 
@@ -84,7 +84,7 @@ namespace WebApi_Project_Internal.Models.UserModel
     {
         [Key]
         public int NotificationId { get; set; }
-        public int UserId { get; set; }
+        public int CurrentUserId { get; set; }
         public int VideoId { get; set; }
         public string? Message { get; set; }
         public bool IsRead { get; set; }
@@ -98,7 +98,7 @@ namespace WebApi_Project_Internal.Models.UserModel
     {
         [Key]
         public int UserProfileId { get; set; }
-        public int UserId { get; set; }
+        public int CurrentUserId { get; set; }
         public string Bio { get; set; }
         public string? ProfilePictureUrl { get; set; }
 
@@ -109,7 +109,7 @@ namespace WebApi_Project_Internal.Models.UserModel
     {
         [Key]
         public int PlaylistId { get; set; }
-        public int UserId { get; set; }
+        public int CurrentUserId { get; set; }
         public string? PlaylistName { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -121,7 +121,7 @@ namespace WebApi_Project_Internal.Models.UserModel
     {
         [Key]
         public int PlaylistVideoId { get; set; }
-        public int PlaylistId { get; set; }
+        public int CurrentUserId { get; set; }
         public int VideoId { get; set; }
         public DateTime AddedAt { get; set; }
 
@@ -134,7 +134,7 @@ namespace WebApi_Project_Internal.Models.UserModel
         [Key]
         public int LikeId { get; set; }
         public int VideoId { get; set; }
-        public int UserId { get; set; }
+        public int CurrentUserId { get; set; }
         public bool IsLike { get; set; }
         public DateTime CreatedAt { get; set; }
 
@@ -146,7 +146,7 @@ namespace WebApi_Project_Internal.Models.UserModel
     {
         [Key]
         public int HistoryId { get; set; }
-        public int UserId { get; set; }
+        public int CurrentUserId { get; set; }
         public int VideoId { get; set; }
         public DateTime WatchedAt { get; set; }
 
@@ -159,7 +159,7 @@ namespace WebApi_Project_Internal.Models.UserModel
         [Key]
         public int CommentId { get; set; }
         public int VideoId { get; set; }
-        public int UserId { get; set; }
+        public int CurrentUserId { get; set; }
         public string? CommentText { get; set; }
         public DateTime CreatedAt { get; set; }
 
@@ -188,7 +188,7 @@ namespace WebApi_Project_Internal.Models.UserModel
     {
         [Key]
         public int UserRoleId { get; set; }
-        public int UserId { get; set; }
+        public int CurrentUserId { get; set; }
         public int RoleId { get; set; }
         public User_? User { get; set; }
         public Role? Role { get; set; }

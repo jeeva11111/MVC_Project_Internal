@@ -4,10 +4,13 @@ using BackEnd.Middleware;
 using Microsoft.AspNetCore.Builder.Extensions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
-using MVC_Project_Internal.Data;
+using WebApi_Project_Internal.Data;
+
 using MVC_Project_Internal.Filters;
 using WebApi_Project_Internal.AuthorizationFilters.Repositories;
 using WebApi_Project_Internal.AuthorizationFilters.Services;
+using WebApi_Project_Internal;
+//using WebApi_Project_Internal.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 // Add services to the container.
+// Add SignalR and other services
+//builder.Services.AddSignalR();
+//builder.Services.AddTransient<HubNotifications>();
 builder.Services.AddScoped<ErrorHandler>();
 builder.Services.AddScoped<IAccountServices, AccountRepositories>();
 builder.Services.AddDistributedMemoryCache();
@@ -62,6 +68,8 @@ app.UseAuthorization();
 app.MapControllers();
 app.UseHttpsRedirection();
 
+// Map the SignalR hub
+//app.MapHub<HubNotifications>("/HubNotifications");
 
 app.Run();
 

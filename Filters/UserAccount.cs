@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
-using MVC_Project_Internal.Data;
+
 
 namespace MVC_Project_Internal.Filters
 {
