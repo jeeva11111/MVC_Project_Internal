@@ -13,6 +13,8 @@ using System.Reflection.Metadata.Ecma335;
 using System.Linq;
 using WebApi_Project_Internal.Models.UserModel;
 using WebApi_Project_Internal.Data;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -25,13 +27,15 @@ public class AccountController : ControllerBase
     private readonly IConfiguration _configuration;
     private readonly IAccountServices _accountServices;
     private readonly ApplicationDbContext _context;
+    private readonly IHttpContextAccessor _contextAccessor;
 
-    public AccountController(IConfiguration configuration, IAccountServices accountServices, ApplicationDbContext context)
+    public AccountController(IConfiguration configuration, IAccountServices accountServices, ApplicationDbContext context, IHttpContextAccessor contextAccessor)
     {
         _configuration = configuration;
         _connectionstring = _configuration.GetConnectionString("ServerLink");
         _accountServices = accountServices;
         _context = context;
+        _contextAccessor = contextAccessor;
     }
 
     [HttpGet, Route("Get")]
@@ -50,21 +54,28 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] BK_LoginViewModel login)
+    public IActionResult Login([FromBody] BK_LoginViewModel login)
     {
         if (!string.IsNullOrWhiteSpace(login.Email) && !string.IsNullOrWhiteSpace(login.Password))
         {
-            var isValid = _accountServices.IsValidUser(login.Email, login.Password);
-
-            if (isValid)
+            var user = _context.AddUser.SingleOrDefault(u => u.Email == login.Email.ToLower());
+            if (user != null)
             {
-                return Ok(true);
+                var isValid = _accountServices.IsValidUser(login.Email, login.Password);
+                if (isValid)
+                {
+                    var cookieUser = _contextAccessor.HttpContext.Request.Cookies["UserId"];
+                    CookieOptions options = new CookieOptions() { HttpOnly = true, Expires = DateTime.Now.AddMinutes(5), Secure = true };
+
+                    _contextAccessor.HttpContext.Response.Cookies.Append("UserId", user.UserId.ToString(), options);
+                    return Ok(new { UserId = user.UserId });
+                }
             }
         }
-        ModelState.AddModelError("", "Invalid login attempt");
-
-        return BadRequest("Invalid user inputs");
+        return BadRequest(new { Message = "Invalid login attempt" });
     }
+
+
 
 
     [HttpPost("Register")]

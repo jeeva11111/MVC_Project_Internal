@@ -23,6 +23,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add SignalR and other services
 //builder.Services.AddSignalR();
 //builder.Services.AddTransient<HubNotifications>();
+ builder.Services.AddDistributedMemoryCache();
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddScoped<ErrorHandler>();
 builder.Services.AddScoped<IAccountServices, AccountRepositories>();
 builder.Services.AddDistributedMemoryCache();
@@ -43,10 +46,22 @@ builder.Services.AddSession(x =>
 {
     x.IdleTimeout = TimeSpan.FromMinutes(10);
     x.Cookie.Name = "LearnNext";
+    //x.Cookie.HttpOnly = true;
+    //x.Cookie.IsEssential = true;
 
 });
 
-builder.Services.AddHttpContextAccessor();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 
 
 builder.Services.AddEndpointsApiExplorer();
@@ -63,6 +78,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSession();
+app.UseCors("AllowAllOrigins");
+
 //app.UseMiddleware<ApiKeyValidation>();
 app.UseAuthorization();
 app.MapControllers();

@@ -16,7 +16,7 @@ namespace WebApi_Project_Internal.Controller
         private readonly ApplicationDbContext _context;
         public NotificationController(ApplicationDbContext context)
         {
-          //  _hubContext = hubContext;
+            //  _hubContext = hubContext;
             _context = context;
         }
 
@@ -25,8 +25,9 @@ namespace WebApi_Project_Internal.Controller
         public async Task<IActionResult> Notification()
         {
             var list = await _context.Notifications.ToListAsync();
-            //await _hubContext.Clients.All.SendAsync("Notify", list.OrderBy(x => x.CreatedAt).LastOrDefault().Message);
-            return Ok();
+
+
+            return Ok(list);
         }
     }
 
